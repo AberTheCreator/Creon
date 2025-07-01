@@ -1,0 +1,37 @@
+import { Button } from '@/components/ui/button';
+import { Home, PlusCircle, Store, TrendingUp, User } from 'lucide-react';
+
+interface BottomNavigationProps {
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+}
+
+export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
+  const tabs = [
+    { id: 'home', label: 'Home', icon: Home },
+    { id: 'create', label: 'Create', icon: PlusCircle },
+    { id: 'marketplace', label: 'Market', icon: Store },
+    { id: 'earnings', label: 'Earnings', icon: TrendingUp },
+    { id: 'profile', label: 'Profile', icon: User },
+  ];
+
+  return (
+    <div className="bg-white border-t border-gray-200 px-4 py-2">
+      <div className="flex items-center justify-around">
+        {tabs.map(({ id, label, icon: Icon }) => (
+          <Button
+            key={id}
+            variant="ghost"
+            onClick={() => onTabChange(id)}
+            className={`flex flex-col items-center space-y-1 py-2 px-3 ${
+              activeTab === id ? 'text-primary' : 'text-gray-400 hover:text-primary'
+            }`}
+          >
+            <Icon className="w-5 h-5" />
+            <span className="text-xs font-medium">{label}</span>
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}
