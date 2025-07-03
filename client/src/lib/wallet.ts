@@ -5,10 +5,28 @@ export const MOCK_WALLET_ADDRESSES = [
 ];
 
 export const connectMetaMask = async (): Promise<{ address: string; type: 'metamask' }> => {
-  // Simulate MetaMask connection
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  // Check if MetaMask is available
+  if (typeof window !== 'undefined' && (window as any).ethereum?.isMetaMask) {
+    try {
+      // Request account access
+      const accounts = await (window as any).ethereum.request({
+        method: 'eth_requestAccounts',
+      });
+      
+      if (accounts.length > 0) {
+        return {
+          address: accounts[0],
+          type: 'metamask'
+        };
+      }
+    } catch (error) {
+      console.error('MetaMask connection error:', error);
+      throw new Error('MetaMask connection failed');
+    }
+  }
   
-  // For MVP, return mock address
+  // Fallback to simulation for development
+  await new Promise(resolve => setTimeout(resolve, 1000));
   return {
     address: MOCK_WALLET_ADDRESSES[0],
     type: 'metamask'
@@ -16,10 +34,26 @@ export const connectMetaMask = async (): Promise<{ address: string; type: 'metam
 };
 
 export const connectPhantom = async (): Promise<{ address: string; type: 'phantom' }> => {
-  // Simulate Phantom connection
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  // Check if Phantom is available
+  if (typeof window !== 'undefined' && (window as any).solana?.isPhantom) {
+    try {
+      // Request account access
+      const response = await (window as any).solana.connect();
+      
+      if (response.publicKey) {
+        return {
+          address: response.publicKey.toString(),
+          type: 'phantom'
+        };
+      }
+    } catch (error) {
+      console.error('Phantom connection error:', error);
+      throw new Error('Phantom connection failed');
+    }
+  }
   
-  // For MVP, return mock Solana address
+  // Fallback to simulation for development
+  await new Promise(resolve => setTimeout(resolve, 1000));
   return {
     address: MOCK_WALLET_ADDRESSES[2],
     type: 'phantom'

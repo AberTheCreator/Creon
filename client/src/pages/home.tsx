@@ -10,14 +10,14 @@ export default function Home() {
 
   if (!wallet || !user) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <WalletConnection onConnect={connectWallet} isConnecting={isConnecting} />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
       <CreatorProfile user={user} />
       <TokenGatedContent user={user} />
       <TippingSystem user={user} />

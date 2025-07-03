@@ -36,7 +36,7 @@ function Router() {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white shadow-2xl h-screen flex flex-col overflow-hidden">
+    <div className="max-w-md mx-auto bg-white dark:bg-gray-900 shadow-2xl h-screen flex flex-col overflow-hidden">
       <Header wallet={wallet} user={user} onDisconnect={disconnect} />
       
       <div className="flex-1 overflow-hidden">
