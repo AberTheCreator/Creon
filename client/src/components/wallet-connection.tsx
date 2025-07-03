@@ -16,35 +16,43 @@ export function WalletConnection({ onConnect, isConnecting }: WalletConnectionPr
   });
 
   useEffect(() => {
+    // Check if we're on mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
     // Check wallet availability
     const checkWallets = () => {
-      setWalletAvailability({
-        metamask: typeof window !== 'undefined' && !!(window as any).ethereum?.isMetaMask,
-        phantom: typeof window !== 'undefined' && !!(window as any).solana?.isPhantom
-      });
+      if (isMobile) {
+        // On mobile, we assume wallets might be available via deep links
+        // We'll check for common user agents or assume they're installed
+        setWalletAvailability({
+          metamask: true, // Assume MetaMask is available on mobile for connection attempt
+          phantom: true   // Assume Phantom is available on mobile for connection attempt
+        });
+      } else {
+        // Desktop detection - check for injected objects
+        setWalletAvailability({
+          metamask: typeof window !== 'undefined' && !!(window as any).ethereum?.isMetaMask,
+          phantom: typeof window !== 'undefined' && !!(window as any).solana?.isPhantom
+        });
+      }
     };
 
     checkWallets();
     
-    // Listen for wallet injection
-    const interval = setInterval(checkWallets, 1000);
-    
-    return () => clearInterval(interval);
+    // Listen for wallet injection (mainly for desktop)
+    if (!isMobile) {
+      const interval = setInterval(checkWallets, 1000);
+      return () => clearInterval(interval);
+    }
   }, []);
 
   const handleMetaMaskConnect = () => {
-    if (!walletAvailability.metamask) {
-      window.open('https://metamask.io/download/', '_blank');
-      return;
-    }
+    // Always try to connect first, let the wallet library handle the connection logic
     onConnect('metamask');
   };
 
   const handlePhantomConnect = () => {
-    if (!walletAvailability.phantom) {
-      window.open('https://phantom.app/', '_blank');
-      return;
-    }
+    // Always try to connect first, let the wallet library handle the connection logic  
     onConnect('phantom');
   };
 
@@ -70,7 +78,7 @@ export function WalletConnection({ onConnect, isConnecting }: WalletConnectionPr
               ) : (
                 <span className="mr-2">🦊</span>
               )}
-              {walletAvailability.metamask ? 'Connect MetaMask' : 'Install MetaMask'}
+              Connect MetaMask
             </Button>
             <div className="absolute -top-2 -right-2">
               {walletAvailability.metamask ? (
@@ -97,7 +105,7 @@ export function WalletConnection({ onConnect, isConnecting }: WalletConnectionPr
               ) : (
                 <span className="mr-2">👻</span>
               )}
-              {walletAvailability.phantom ? 'Connect Phantom' : 'Install Phantom'}
+              Connect Phantom
             </Button>
             <div className="absolute -top-2 -right-2">
               {walletAvailability.phantom ? (
@@ -114,9 +122,7 @@ export function WalletConnection({ onConnect, isConnecting }: WalletConnectionPr
         </div>
         
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-4">
-          {!walletAvailability.metamask && !walletAvailability.phantom 
-            ? 'No wallets detected. Click to install.' 
-            : 'Detected wallets will connect directly'}
+          Click to connect your wallet. On mobile, this will open your wallet app.
         </p>
       </CardContent>
     </Card>

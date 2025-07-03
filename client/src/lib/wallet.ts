@@ -5,7 +5,10 @@ export const MOCK_WALLET_ADDRESSES = [
 ];
 
 export const connectMetaMask = async (): Promise<{ address: string; type: 'metamask' }> => {
-  // Check if MetaMask is available
+  // Check if we're on mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Check if MetaMask is available (desktop)
   if (typeof window !== 'undefined' && (window as any).ethereum?.isMetaMask) {
     try {
       // Request account access
@@ -25,6 +28,22 @@ export const connectMetaMask = async (): Promise<{ address: string; type: 'metam
     }
   }
   
+  // Mobile deep link for MetaMask
+  if (isMobile) {
+    const dappUrl = encodeURIComponent(window.location.href);
+    const metamaskDeepLink = `https://metamask.app.link/dapp/${dappUrl}`;
+    
+    // Try to open MetaMask app
+    window.location.href = metamaskDeepLink;
+    
+    // For demo purposes, return a mock address after attempting deep link
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return {
+      address: MOCK_WALLET_ADDRESSES[0],
+      type: 'metamask'
+    };
+  }
+  
   // Fallback to simulation for development
   await new Promise(resolve => setTimeout(resolve, 1000));
   return {
@@ -34,7 +53,10 @@ export const connectMetaMask = async (): Promise<{ address: string; type: 'metam
 };
 
 export const connectPhantom = async (): Promise<{ address: string; type: 'phantom' }> => {
-  // Check if Phantom is available
+  // Check if we're on mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Check if Phantom is available (desktop)
   if (typeof window !== 'undefined' && (window as any).solana?.isPhantom) {
     try {
       // Request account access
@@ -50,6 +72,22 @@ export const connectPhantom = async (): Promise<{ address: string; type: 'phanto
       console.error('Phantom connection error:', error);
       throw new Error('Phantom connection failed');
     }
+  }
+  
+  // Mobile deep link for Phantom
+  if (isMobile) {
+    const dappUrl = encodeURIComponent(window.location.href);
+    const phantomDeepLink = `https://phantom.app/ul/browse/${dappUrl}?ref=${window.location.hostname}`;
+    
+    // Try to open Phantom app
+    window.location.href = phantomDeepLink;
+    
+    // For demo purposes, return a mock address after attempting deep link
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    return {
+      address: MOCK_WALLET_ADDRESSES[2],
+      type: 'phantom'
+    };
   }
   
   // Fallback to simulation for development
