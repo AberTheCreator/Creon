@@ -3,11 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, DollarSign, Heart, Award, Download, ExternalLink } from 'lucide-react';
-import { useWallet } from '@/hooks/use-wallet';
 import type { Tip, UserStats } from '@shared/schema';
+import type { WalletConnection } from '@/types';
+import type { User } from '@shared/schema';
 
-export default function Earnings() {
-  const { user } = useWallet();
+interface EarningsProps {
+  wallet: WalletConnection | null;
+  user: User | null;
+}
+
+export default function Earnings({ wallet, user }: EarningsProps) {
 
   const { data: stats } = useQuery<UserStats>({
     queryKey: [`/api/users/${user?.id}/stats`],

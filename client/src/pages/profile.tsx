@@ -13,9 +13,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
-import { useWallet } from '@/hooks/use-wallet';
 import { formatAddress } from '@/lib/wallet';
-import type { NFT, GrantApplication, UserStats } from '@shared/schema';
+import type { NFT, GrantApplication, UserStats, User } from '@shared/schema';
+import type { WalletConnection } from '@/types';
 
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -23,9 +23,13 @@ const profileSchema = z.object({
   bio: z.string().optional(),
 });
 
-export default function Profile() {
+interface ProfileProps {
+  wallet: WalletConnection | null;
+  user: User | null;
+}
+
+export default function Profile({ wallet, user }: ProfileProps) {
   const [showEdit, setShowEdit] = useState(false);
-  const { user, disconnect } = useWallet();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -313,7 +317,7 @@ export default function Profile() {
           
           <Button
             variant="outline"
-            onClick={disconnect}
+            onClick={() => {}}
             className="w-full justify-start text-destructive hover:text-destructive"
           >
             Disconnect Wallet

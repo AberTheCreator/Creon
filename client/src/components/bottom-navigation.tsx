@@ -27,8 +27,8 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
               activeTab === id ? 'text-primary dark:text-primary' : 'text-gray-400 dark:text-gray-500 hover:text-primary dark:hover:text-primary'
             }`}
           >
-            <Icon className="w-5 h-5" />
-            <span className="text-xs font-medium">{label}</span>
+            <Icon className={`${id === 'create' ? 'w-6 h-6' : 'w-5 h-5'} ${id === 'create' && activeTab === id ? 'scale-110 transition-transform' : ''}`} />
+            <span className={`text-xs font-medium ${id === 'create' ? 'font-semibold' : ''}`}>{label}</span>
           </Button>
         ))}
       </div>

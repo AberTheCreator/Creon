@@ -16,22 +16,22 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   const [activeTab, setActiveTab] = useState('home');
-  const { wallet, user, disconnect } = useWallet();
+  const { wallet, user, disconnect, isConnecting, connectWallet } = useWallet();
 
   const renderActiveTab = () => {
     switch (activeTab) {
       case 'home':
-        return <Home />;
+        return <Home wallet={wallet} user={user} connectWallet={connectWallet} isConnecting={isConnecting} />;
       case 'create':
-        return <Create />;
+        return <Create wallet={wallet} user={user} />;
       case 'marketplace':
-        return <Marketplace />;
+        return <Marketplace wallet={wallet} user={user} />;
       case 'earnings':
-        return <Earnings />;
+        return <Earnings wallet={wallet} user={user} />;
       case 'profile':
-        return <Profile />;
+        return <Profile wallet={wallet} user={user} />;
       default:
-        return <Home />;
+        return <Home wallet={wallet} user={user} connectWallet={connectWallet} isConnecting={isConnecting} />;
     }
   };
 

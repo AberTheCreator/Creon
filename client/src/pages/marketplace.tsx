@@ -5,7 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Filter, Star, Eye, Download } from 'lucide-react';
 
-export default function Marketplace() {
+import type { WalletConnection } from '@/types';
+import type { User } from '@shared/schema';
+
+interface MarketplaceProps {
+  wallet: WalletConnection | null;
+  user: User | null;
+}
+
+export default function Marketplace({ wallet, user }: MarketplaceProps) {
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const marketplaceItems = [
