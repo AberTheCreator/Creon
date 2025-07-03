@@ -4,6 +4,8 @@ import {
   type GrantApplication, type InsertGrantApplication, type Tip, type InsertTip,
   type TokenGatedContent, type InsertTokenGatedContent, type UserStats, type InsertUserStats
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -379,4 +381,136 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByWallet(walletAddress: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.walletAddress, walletAddress));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    
+    // Create initial user stats
+    await db.insert(userStats).values({
+      userId: user.id,
+      creationCount: 0,
+      totalEarnings: "0.00",
+      tipCount: 0,
+      followerCount: 0,
+    });
+    
+    return user;
+  }
+
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async getNFTsByUserId(userId: number): Promise<NFT[]> {
+    return await db.select().from(nfts).where(eq(nfts.userId, userId));
+  }
+
+  async createNFT(insertNFT: InsertNFT): Promise<NFT> {
+    const [nft] = await db
+      .insert(nfts)
+      .values(insertNFT)
+      .returning();
+    return nft;
+  }
+
+  async getAllGrants(): Promise<Grant[]> {
+    return await db.select().from(grants);
+  }
+
+  async getGrant(id: number): Promise<Grant | undefined> {
+    const [grant] = await db.select().from(grants).where(eq(grants.id, id));
+    return grant || undefined;
+  }
+
+  async createGrant(insertGrant: InsertGrant): Promise<Grant> {
+    const [grant] = await db
+      .insert(grants)
+      .values(insertGrant)
+      .returning();
+    return grant;
+  }
+
+  async getGrantApplicationsByUserId(userId: number): Promise<GrantApplication[]> {
+    return await db.select().from(grantApplications).where(eq(grantApplications.userId, userId));
+  }
+
+  async createGrantApplication(insertApplication: InsertGrantApplication): Promise<GrantApplication> {
+    const [application] = await db
+      .insert(grantApplications)
+      .values(insertApplication)
+      .returning();
+    return application;
+  }
+
+  async getTipsByUserId(userId: number): Promise<Tip[]> {
+    return await db.select().from(tips).where(eq(tips.toUserId, userId));
+  }
+
+  async createTip(insertTip: InsertTip): Promise<Tip> {
+    const [tip] = await db
+      .insert(tips)
+      .values(insertTip)
+      .returning();
+    return tip;
+  }
+
+  async getAllTokenGatedContent(): Promise<TokenGatedContent[]> {
+    return await db.select().from(tokenGatedContent);
+  }
+
+  async getTokenGatedContentById(id: number): Promise<TokenGatedContent | undefined> {
+    const [content] = await db.select().from(tokenGatedContent).where(eq(tokenGatedContent.id, id));
+    return content || undefined;
+  }
+
+  async getUserStats(userId: number): Promise<UserStats | undefined> {
+    const [stats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    return stats || undefined;
+  }
+
+  async updateUserStats(userId: number, updates: Partial<InsertUserStats>): Promise<UserStats> {
+    const [stats] = await db
+      .update(userStats)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(userStats.userId, userId))
+      .returning();
+    
+    if (!stats) {
+      // Create new stats if none exist
+      const [newStats] = await db
+        .insert(userStats)
+        .values({
+          userId,
+          creationCount: 0,
+          totalEarnings: "0.00",
+          tipCount: 0,
+          followerCount: 0,
+          ...updates,
+        })
+        .returning();
+      return newStats;
+    }
+    
+    return stats;
+  }
+}
+
+export const storage = new DatabaseStorage();
