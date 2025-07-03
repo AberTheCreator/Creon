@@ -25,7 +25,8 @@ Creon is a modern Web3-enabled creator economy platform built as a mobile-first 
 - **ORM**: Drizzle ORM for type-safe database operations
 - **Database**: PostgreSQL (configured for Neon serverless)
 - **Schema Management**: Drizzle Kit for migrations and schema management
-- **Storage Interface**: Abstract storage interface with in-memory implementation for development
+- **Storage Interface**: Abstract storage interface with DatabaseStorage implementation for production
+- **Relations**: Comprehensive table relations for user management, NFTs, grants, tips, and content
 
 ## Key Components
 
@@ -103,6 +104,7 @@ Creon is a modern Web3-enabled creator economy platform built as a mobile-first 
 
 ```
 Changelog:
+- July 03, 2025. Integrated PostgreSQL database with Drizzle ORM and DatabaseStorage implementation
 - July 03, 2025. Added dark mode toggle functionality with theme persistence
 - July 03, 2025. Enhanced wallet connection with real-time wallet detection
 - July 03, 2025. Made wallet buttons responsive to actual wallet availability  

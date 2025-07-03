@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, boolean, timestamp, numeric, jsonb } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -92,6 +93,37 @@ export const userStats = pgTable("user_stats", {
   followerCount: integer("follower_count").default(0),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Relations
+export const usersRelations = relations(users, ({ many, one }) => ({
+  nfts: many(nfts),
+  grantApplications: many(grantApplications),
+  sentTips: many(tips, { relationName: "sentTips" }),
+  receivedTips: many(tips, { relationName: "receivedTips" }),
+  stats: one(userStats),
+}));
+
+export const nftsRelations = relations(nfts, ({ one }) => ({
+  user: one(users, { fields: [nfts.userId], references: [users.id] }),
+}));
+
+export const grantsRelations = relations(grants, ({ many }) => ({
+  applications: many(grantApplications),
+}));
+
+export const grantApplicationsRelations = relations(grantApplications, ({ one }) => ({
+  user: one(users, { fields: [grantApplications.userId], references: [users.id] }),
+  grant: one(grants, { fields: [grantApplications.grantId], references: [grants.id] }),
+}));
+
+export const tipsRelations = relations(tips, ({ one }) => ({
+  fromUser: one(users, { fields: [tips.fromUserId], references: [users.id], relationName: "sentTips" }),
+  toUser: one(users, { fields: [tips.toUserId], references: [users.id], relationName: "receivedTips" }),
+}));
+
+export const userStatsRelations = relations(userStats, ({ one }) => ({
+  user: one(users, { fields: [userStats.userId], references: [users.id] }),
+}));
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
