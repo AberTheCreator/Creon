@@ -1,8 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Image, Video, FileText, Palette } from 'lucide-react';
+import type { WalletConnection } from '@/types';
+import type { User } from '@shared/schema';
 
-export default function Create() {
+interface CreateProps {
+  wallet: WalletConnection | null;
+  user: User | null;
+}
+
+export default function Create({ wallet, user }: CreateProps) {
   const createOptions = [
     {
       title: 'Design Template',

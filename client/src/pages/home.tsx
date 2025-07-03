@@ -3,10 +3,17 @@ import { CreatorProfile } from '@/components/creator-profile';
 import { TokenGatedContent } from '@/components/token-gated-content';
 import { TippingSystem } from '@/components/tipping-system';
 import { GrantDiscovery } from '@/components/grant-discovery';
-import { useWallet } from '@/hooks/use-wallet';
+import type { WalletConnection as WalletConnectionType } from '@/types';
+import type { User } from '@shared/schema';
 
-export default function Home() {
-  const { wallet, user, isConnecting, connectWallet } = useWallet();
+interface HomeProps {
+  wallet: WalletConnectionType | null;
+  user: User | null;
+  connectWallet: (type: 'metamask' | 'phantom') => void;
+  isConnecting: boolean;
+}
+
+export default function Home({ wallet, user, connectWallet, isConnecting }: HomeProps) {
 
   if (!wallet || !user) {
     return (
