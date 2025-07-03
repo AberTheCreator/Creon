@@ -23,15 +23,15 @@ export function CreatorProfile({ user }: CreatorProfileProps) {
   const displayNFTs = showAllNFTs ? nfts : nfts.slice(0, 3);
 
   return (
-    <div className="p-4 border-b border-gray-100">
+    <div className="p-4 border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900">
       <div className="flex items-center space-x-4 mb-4">
         <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-xl font-bold">
           {user.name.charAt(0)}
         </div>
         
         <div className="flex-1">
-          <h3 className="font-semibold text-gray-800">{user.name}</h3>
-          <p className="text-sm text-gray-600">{user.title || 'Creator'}</p>
+          <h3 className="font-semibold text-gray-800 dark:text-gray-200">{user.name}</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{user.title || 'Creator'}</p>
           {user.isVerified && (
             <div className="flex items-center space-x-2 mt-1">
               <CheckCircle className="w-4 h-4 text-accent" />
