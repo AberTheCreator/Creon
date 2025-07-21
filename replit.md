@@ -100,19 +100,3 @@ Creon is a modern Web3-enabled creator economy platform built as a mobile-first 
 - Production/development environment detection
 - Replit-specific development tools and banners
 
-## Changelog
-
-```
-Changelog:
-- July 03, 2025. Integrated PostgreSQL database with Drizzle ORM and DatabaseStorage implementation
-- July 03, 2025. Added dark mode toggle functionality with theme persistence
-- July 03, 2025. Enhanced wallet connection with real-time wallet detection
-- July 03, 2025. Made wallet buttons responsive to actual wallet availability  
-- July 01, 2025. Initial setup
-```
-
-## User Preferences
-
-```
-Preferred communication style: Simple, everyday language.
-```bash 
